@@ -10,7 +10,7 @@ import json
 #####
 # chalice app configuration
 #####
-app = Chalice(app_name='LanguageTranslator')
+app = Chalice(app_name='EmotSense')
 app.debug = True
 
 #####
@@ -38,38 +38,29 @@ def upload_image():
     return image_info
 
 
-@app.route('/images/{image_id}/translate-text', methods = ['POST'], cors = True)
-def translate_image_text(image_id):
+@app.route('/images/{image_id}/detect-emotion', methods = ['POST'], cors = True)
+def detect_emotion(image_id):
     """detects then translates text in the specified image"""
     request_data = json.loads(app.current_request.raw_body)
     from_lang = request_data['fromLang']
     to_lang = request_data['toLang']
 
-    MIN_CONFIDENCE = 80.0
+    MIN_CONFIDENCE = 60.0
 
-    text_lines = recognition_service.detect_text(image_id)
+    emotions = []
+    labels = recognition_service.detect_emotion(image_id)
+    for label in labels:
+        print('-- ' + label['Type'] + ': ' + str(label['Confidence']))
+        if label['Confidence'] > MIN_CONFIDENCE:
+            emotions.append(label['Type'])
+    return emotions
 
-    translated_lines = []
-    for line in text_lines:
-        # check confidence
-        if float(line['confidence']) >= MIN_CONFIDENCE:
-            translated_line = translation_service.translate_text(line['text'], from_lang, to_lang)
-            translated_lines.append({
-                'text': line['text'],
-                'translation': translated_line,
-                'boundingBox': line['boundingBox']
-            })
+@app.route('/images/{image_id}/read', methods = ['POST'], cors = True)
+def read_emotion(image_id):
+    request_data = json.loads(app.current_request.raw_body)
+    text = request_data['text']
 
-    # take all the translated texts
-    translated_texts = [item['translation']['translatedText'] for item in translated_lines]
-
-    # concatenate translated texts
-    translated_texts = ' '.join(translated_texts)
-    
-    mp3_file = tts_service.synthesize_speech(translated_texts)
-    if mp3_file:
-        print(f"Speech saved as {mp3_file}")
-    else:
-        print("Error synthesizing speech.")
-
-    return translated_lines
+    response = tts_service.synthesize_speech(text)
+    audio_stream = response['AudioStream'].read()
+    audio_info = storage_service.upload_file(audio_stream, image_id + ".mp3")
+    return audio_info

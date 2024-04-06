@@ -5,7 +5,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <title>Pictorial Translator</title>
+    <title>EmotSense</title>
 
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
@@ -21,7 +21,7 @@
             <p class="w3-opacity"><b>Upload</b></p>
             <input id="file" type="file" name="file" accept="image/*"/>
             <input class="w3-button w3-blue-grey" type="submit" value="Upload"
-                   onclick="uploadAndTranslate()"/>
+                   onclick="uploadAndSense()"/>
 
             <p class="w3-opacity"><b>Image</b></p>
             <div id="view" class="w3-panel w3-white w3-card w3-display-container"
@@ -29,10 +29,16 @@
                 <div style="float: left;">
                     <img id="image" width="600"/>
                 </div>
-                <div style="float: right;">
-                    <h5>Translated Text:</h5>
-                    <div id="translations"/>
+                <div>
+                    <h5>Detected Emotion:</h5>
+                    <div id="emotions"/>
                 </div>
+            </div>
+            <div style="float: left;">
+                <h5>Text to Speech:</h5>
+                <audio id="player" controls>
+                    <source id="audioSource" type="audio/mpeg">
+                </audio>
             </div>
         </div>
     </div>

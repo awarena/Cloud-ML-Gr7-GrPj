@@ -45,10 +45,10 @@ function updateImage(image) {
     return image;
 }
 
-function translateImage(image) {
+function detectEmotion(image) {
     // make server call to translate image
     // and return the server upload promise
-    return fetch(serverUrl + "/images/" + image["fileId"] + "/translate-text", {
+    return fetch(serverUrl + "/images/" + image["fileId"] + "/detect-emotion", {
         method: "POST",
         headers: {
             'Accept': 'application/json',
@@ -64,27 +64,62 @@ function translateImage(image) {
     })
 }
 
-function annotateImage(translations) {
-    let translationsElem = document.getElementById("translations");
-    while (translationsElem.firstChild) {
-        translationsElem.removeChild(translationsElem.firstChild);
+function annotateImage(emotions) {
+    let emotionsElem = document.getElementById("emotions");
+    while (emotionsElem.firstChild) {
+        emotionsElem.removeChild(emotionsElem.firstChild);
     }
-    translationsElem.clear
-    for (let i = 0; i < translations.length; i++) {
-        let translationElem = document.createElement("h6");
-        translationElem.appendChild(document.createTextNode(
-            translations[i]["text"] + " -> " + translations[i]["translation"]["translatedText"]
+    emotionsElem.clear
+    let emotionText = ""
+    for (let i = 0; i < emotions.length; i++) {
+        let emotionElem = document.createElement("h6");
+        emotionText = emotionText + " " + emotions[i];
+        emotionElem.appendChild(document.createTextNode(
+            emotions[i]
         ));
-        translationsElem.appendChild(document.createElement("hr"));
-        translationsElem.appendChild(translationElem);
+        
+        emotionsElem.appendChild(document.createElement("hr"));
+        emotionsElem.appendChild(emotionElem);
     }
+    return emotionText
 }
 
-function uploadAndTranslate() {
+function readEmotion(emotionText) {
+    let imageElem = document.getElementById("image");
+    return fetch(serverUrl + "/images/" + imageElem.alt + "/read", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({text: emotionText})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+function updateAudio(audio){
+    let player = document.getElementById("player");
+    let source = document.getElementById("audioSource");
+    source.src = audio["fileUrl"];
+    player.alt = audio["fileId"];
+    player.load()
+    player.play()
+    
+}
+
+
+function uploadAndSense() {
     uploadImage()
         .then(image => updateImage(image))
-        .then(image => translateImage(image))
-        .then(translations => annotateImage(translations))
+        .then(image => detectEmotion(image))
+        .then(emotions => annotateImage(emotions))
+        .then(emotionText => readEmotion(emotionText))
+        .then(audio => updateAudio(audio))
         .catch(error => {
             alert("Error: " + error);
         })
