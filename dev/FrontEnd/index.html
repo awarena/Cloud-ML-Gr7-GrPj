@@ -14,10 +14,27 @@
 <body class="w3-theme-14">
     <div style="min-width:400px">
         <div class="w3-bar w3-large w3-theme-d4">
-            <span class="w3-bar-item">Pictorial Translator</span>
+            <span class="w3-bar-item">EmotSense</span>
         </div>
 
         <div class="w3-container w3-content">
+            <p><b>Register User</b></p>
+            <input id="file-user-reg" type="file" name="file-user-reg" accept="image/*"/>
+            <input class="w3-button w3-blue-grey" type="submit" value="Upload"
+                   onclick="uploadAndRegister()"/>
+            
+            <hr/>
+            <p><b>Authenticate User</b></p>
+            <input id="file-user-auth" type="file" name="file-user-auth" accept="image/*"/>
+            <input class="w3-button w3-blue-grey" type="submit" value="Upload"
+                    onclick="uploadAndAuthenticate()"/>
+            <div>
+                <h5>Login Message:</h5>
+                <audio id="playerAuth" controls>
+                    <source id="audioAuth" type="audio/mpeg">
+                </audio>
+            </div>
+            <hr/>
             <p class="w3-opacity"><b>Upload</b></p>
             <input id="file" type="file" name="file" accept="image/*"/>
             <input class="w3-button w3-blue-grey" type="submit" value="Upload"
@@ -40,6 +57,10 @@
                     <source id="audioSource" type="audio/mpeg">
                 </audio>
             </div>
+
+
+
+            
         </div>
     </div>
 

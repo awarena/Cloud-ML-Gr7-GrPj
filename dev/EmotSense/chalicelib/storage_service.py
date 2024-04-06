@@ -2,18 +2,21 @@ import boto3
 
 
 class StorageService:
-    def __init__(self, storage_location):
+    def __init__(self):
         self.client = boto3.client('s3')
-        self.bucket_name = storage_location
-
-    def get_storage_location(self):
-        return self.bucket_name
-
-    def upload_file(self, file_bytes, file_name):
-        self.client.put_object(Bucket = self.bucket_name,
+        
+    def upload_file(self, file_bytes, file_name, bucket_name):
+        self.client.put_object(Bucket = bucket_name,
                                Body = file_bytes,
                                Key = file_name,
                                ACL = 'public-read')
 
         return {'fileId': file_name,
-                'fileUrl': "http://" + self.bucket_name + ".s3.amazonaws.com/" + file_name}
+                'fileUrl': "http://" + bucket_name + ".s3.amazonaws.com/" + file_name}
+
+    def file_bytes(self, file_name, bucket_name):
+        response = self.client.get_object(
+            Bucket = bucket_name,
+            Key = file_name
+        )
+        return response['Body'].read()
