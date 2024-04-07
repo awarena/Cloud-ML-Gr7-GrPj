@@ -2,7 +2,7 @@
 
 const serverUrl = "http://127.0.0.1:8000";
 
-async function uploadImage() {
+async function uploadImage(storage) {
     // encode input file as base64 string for upload
     let file = document.getElementById("file").files[0];
     let converter = new Promise(function(resolve, reject) {
@@ -25,7 +25,7 @@ async function uploadImage() {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({filename: file.name, filebytes: encodedString})
+        body: JSON.stringify({filename: file.name, filebytes: encodedString, storage: storage})
     }).then(response => {
         if (response.ok) {
             return response.json();
@@ -45,10 +45,10 @@ function updateImage(image) {
     return image;
 }
 
-function translateImage(image) {
+function detectEmotion(image) {
     // make server call to translate image
     // and return the server upload promise
-    return fetch(serverUrl + "/images/" + image["fileId"] + "/translate-text", {
+    return fetch(serverUrl + "/images/" + image["fileId"] + "/detect-emotion", {
         method: "POST",
         headers: {
             'Accept': 'application/json',
@@ -64,30 +64,223 @@ function translateImage(image) {
     })
 }
 
-function annotateImage(translations) {
-    let translationsElem = document.getElementById("translations");
-    while (translationsElem.firstChild) {
-        translationsElem.removeChild(translationsElem.firstChild);
+function annotateImage(emotions) {
+    let emotionsElem = document.getElementById("emotions");
+    while (emotionsElem.firstChild) {
+        emotionsElem.removeChild(emotionsElem.firstChild);
     }
-    translationsElem.clear
-    for (let i = 0; i < translations.length; i++) {
-        let translationElem = document.createElement("h6");
-        translationElem.appendChild(document.createTextNode(
-            translations[i]["text"] + " -> " + translations[i]["translation"]["translatedText"]
+    emotionsElem.clear
+    let emotionText = ""
+    for (let i = 0; i < emotions.length; i++) {
+        let emotionElem = document.createElement("h6");
+        emotionText = emotionText + " " + emotions[i];
+        emotionElem.appendChild(document.createTextNode(
+            emotions[i]
         ));
-        translationsElem.appendChild(document.createElement("hr"));
-        translationsElem.appendChild(translationElem);
+        
+        emotionsElem.appendChild(document.createElement("hr"));
+        emotionsElem.appendChild(emotionElem);
     }
+    return emotionText
 }
 
-function uploadAndTranslate() {
-    uploadImage()
+function readEmotion(emotionText) {
+    let imageElem = document.getElementById("image");
+    return fetch(serverUrl + "/images/" + imageElem.alt + "/read", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({text: emotionText})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+function updateAudio(audio){
+    let player = document.getElementById("player");
+    let source = document.getElementById("audioSource");
+    source.src = audio["fileUrl"];
+    player.alt = audio["fileId"];
+    player.load()
+    player.play()
+    
+}
+
+async function uploadUserImage(storage) {
+    // encode input file as base64 string for upload
+    let file = document.getElementById("file-user-reg").files[0];
+    let converter = new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result
+            .toString().replace(/^data:(.*,)?/, ''));
+        reader.onerror = (error) => reject(error);
+    });
+    let encodedString = await converter;
+
+    // clear file upload input field
+    document.getElementById("file").value = "";
+
+    // make server call to upload image
+    // and return the server upload promise
+    return fetch(serverUrl + "/images", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({filename: file.name, filebytes: encodedString, storage: storage})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+function createUser(image) {
+    // make server call to translate image
+    // and return the server upload promise
+    return fetch(serverUrl + "/users", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({imageId: image["fileId"]})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+async function uploadAuthImage(storage) {
+    // encode input file as base64 string for upload
+    let file = document.getElementById("file-user-auth").files[0];
+    let converter = new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result
+            .toString().replace(/^data:(.*,)?/, ''));
+        reader.onerror = (error) => reject(error);
+    });
+    let encodedString = await converter;
+
+    // clear file upload input field
+    document.getElementById("file").value = "";
+
+    // make server call to upload image
+    // and return the server upload promise
+    return fetch(serverUrl + "/images", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({filename: file.name, filebytes: encodedString, storage: storage})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+function authenticateUser(image) {
+    // make server call to translate image
+    // and return the server upload promise
+    return fetch(serverUrl + "/users/authenticate", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({imageId: image["fileId"]})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+function updateAuthAudio(audio){
+    let player = document.getElementById("playerAuth");
+    let source = document.getElementById("audioAuth");
+    source.src = audio["fileUrl"];
+    player.alt = audio["fileId"];
+    player.load()
+    player.play()
+    
+}
+
+function readAuthResponse(authResponse) {
+    let faceId = '';
+    let text = '';
+    if(authResponse['Message'] === 'Success'){
+        faceId = authResponse['rekognitionId'];
+        text = "Welcome " + authResponse['firstName'] + " " + authResponse['lastName'] + "!";
+    }
+    else {
+        faceId = 'auth-failed';
+        text = "Authentication failed. Face was not recognized. Please register.";
+    }
+    return fetch(serverUrl + "/users/" + faceId + "/read_auth", {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({text: text})
+    }).then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new HttpError(response);
+        }
+    })
+}
+
+function uploadAndSense() {
+    uploadImage('contentcen301330426.aws.ai')
         .then(image => updateImage(image))
-        .then(image => translateImage(image))
-        .then(translations => annotateImage(translations))
+        .then(image => detectEmotion(image))
+        .then(emotions => annotateImage(emotions))
+        .then(emotionText => readEmotion(emotionText))
+        .then(audio => updateAudio(audio))
         .catch(error => {
             alert("Error: " + error);
         })
+}
+
+function uploadAndRegister() {
+    uploadUserImage('contentcen301330426.aws.ai')
+        .then(image => createUser(image))
+        .catch(error => {
+        alert("Error: " + error);
+    })
+}
+
+function uploadAndAuthenticate() {
+    uploadAuthImage('contentcen301330426.aws.ai')
+        .then(image => authenticateUser(image))
+        .then(authResponse => readAuthResponse(authResponse))
+        .then(audio => updateAuthAudio(audio))
+        .catch(error => {
+        alert("Error: " + error);
+    })
 }
 
 class HttpError extends Error {
