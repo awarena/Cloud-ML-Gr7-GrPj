@@ -254,7 +254,7 @@ function readAuthResponse(authResponse) {
 }
 
 function uploadAndSense() {
-    uploadImage('contentcen301330426.aws.ai')
+    uploadImage('contentcen301232634.aws.ai')
         .then(image => updateImage(image))
         .then(image => detectEmotion(image))
         .then(emotions => annotateImage(emotions))
@@ -266,7 +266,7 @@ function uploadAndSense() {
 }
 
 function uploadAndRegister() {
-    uploadUserImage('contentcen301330426.aws.ai')
+    uploadUserImage('contentcen301232634.aws.ai')
         .then(image => createUser(image))
         .catch(error => {
         alert("Error: " + error);
@@ -274,7 +274,7 @@ function uploadAndRegister() {
 }
 
 function uploadAndAuthenticate() {
-    uploadAuthImage('contentcen301330426.aws.ai')
+    uploadAuthImage('contentcen301232634.aws.ai')
         .then(image => authenticateUser(image))
         .then(authResponse => readAuthResponse(authResponse))
         .then(audio => updateAuthAudio(audio))
