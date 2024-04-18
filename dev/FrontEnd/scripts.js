@@ -164,6 +164,10 @@ function createUser(image) {
     })
 }
 
+function annotateRegResponse(authResponse) {
+    let regTextElem = document.getElementById("regText");
+    regTextElem.appendChild(document.createTextNode(authResponse['Message']));
+}
 async function uploadAuthImage(storage) {
     // encode input file as base64 string for upload
     let file = document.getElementById("file-user-auth").files[0];
@@ -268,6 +272,7 @@ function uploadAndSense() {
 function uploadAndRegister() {
     uploadUserImage('contentcen301330426.aws.ai')
         .then(image => createUser(image))
+        .then(authResponse => annotateRegResponse(authResponse))
         .catch(error => {
         alert("Error: " + error);
     })

@@ -53,8 +53,6 @@ def upload_image():
 def detect_emotion(image_id):
     """detects then translates text in the specified image"""
     request_data = json.loads(app.current_request.raw_body)
-    from_lang = request_data['fromLang']
-    to_lang = request_data['toLang']
 
     MIN_CONFIDENCE = 60.0
 
@@ -89,8 +87,8 @@ def create_user():
         last_name = name[1]
         response = dynamo_service.create_user(face_id, first_name, last_name)
         if response['ResponseMetadata']['HTTPStatusCode'] == 200:
-            return { 'message': "User successfully created."}
-    return face_record
+            return { 'Message': "User successfully created."}
+    return { 'Message': 'Something went wrong. Please try again.'}
 
 @app.route('/users/authenticate', methods = ['POST'], cors = True)
 def authenticate_user():
