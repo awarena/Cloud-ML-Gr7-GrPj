@@ -1,0 +1,51 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 67.6vh;
+    background-color: #ffba49; /* Saffron background */
+}
+
+.login-form {
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-header {
+    margin-bottom: 20px;
+    color: #ffba49; /* Saffron colored text */
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #ef5b5b; /* Soft red background */
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #d9534f; /* Darker red */
+}
+
+.input-file {
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #d9534f; /* Dark red for errors */
+    margin-top: 10px;
+}
+
+.audio-control {
+    margin-top: 20px;
+}

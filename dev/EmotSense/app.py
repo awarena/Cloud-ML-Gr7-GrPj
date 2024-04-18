@@ -17,15 +17,15 @@ app.debug = True
 #####
 # services initialization
 #####
-storage_location = 'contentcen301330426.aws.ai'
+storage_location = 'contentcen301232634.aws.ai'
 # target_image_storage =  'emotsense-target-images'
-target_image_storage =  'contentcen301330426.aws.ai'
+target_image_storage =  'contentcen301232634.aws.ai'
 
 # user_reg_image_storage = 'emotsense-user-images'
-user_reg_image_storage =  'contentcen301330426.aws.ai'
+user_reg_image_storage =  'contentcen301232634.aws.ai'
 
 # user_auth_image_storage = 'emotsense-auth-images'
-user_auth_image_storage =  'contentcen301330426.aws.ai'
+user_auth_image_storage =  'contentcen301232634.aws.ai'
 
 storage_service = storage_service.StorageService()
 recognition_service = recognition_service.RecognitionService(storage_service)

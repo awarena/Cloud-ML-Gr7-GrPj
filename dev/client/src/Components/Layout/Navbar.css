@@ -1,0 +1,35 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #20A39E; /* Teal background */
+    color: white;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    color: #FFBA49; /* Yellow text for brand */
+}
+
+.logo {
+    width: 50px; /* Adjust size as needed */
+    margin-right: 10px;
+}
+
+.navbar-links {
+    display: flex;
+}
+
+.nav-link {
+    color: #FFBA49; /* Yellow text */
+    text-decoration: none;
+    margin-left: 20px;
+    padding: 5px 10px;
+}
+
+.nav-link:hover {
+    background-color: #EF5B5B; /* Red background on hover */
+    border-radius: 5px; /* Optional: adds rounded corners */
+}

@@ -1,0 +1,77 @@
+.test-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #ffffff; /* Light background for the test area */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 20px;
+    width: 90%;
+    max-width: 600px;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 67.6vh;
+    background-color: #ffba49; /* Saffron background */
+}
+
+h1 {
+    color: #ffba49; /* Saffron color for headers */
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ef5b5b; /* Soft red background for buttons */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: #d9534f; /* A darker shade of red */
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+input[type="file"] {
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    width: calc(100% - 20px);
+}
+
+.error-message {
+    color: #d9534f; /* Error messages in red */
+    margin-top: 10px;
+}
+
+.results {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.results img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+h6 {
+    color: #333;
+    margin: 5px 0;
+}
