@@ -55,6 +55,7 @@ def detect_emotion(image_id):
     request_data = json.loads(app.current_request.raw_body)
     from_lang = request_data['fromLang']
     to_lang = request_data['toLang']
+    rekognitionId = request_data['rekognitionId']  ### Extract the rekognitionId from the request (for emotion logging)
 
     MIN_CONFIDENCE = 60.0
 
@@ -64,6 +65,9 @@ def detect_emotion(image_id):
         print('-- ' + label['Type'] + ': ' + str(label['Confidence']))
         if label['Confidence'] > MIN_CONFIDENCE:
             emotions.append(label['Type'])
+
+    dynamo_service.log_emotions(rekognitionId, emotions)  ### call the log_emotions method from dynamo_service.py
+
     return emotions
 
 @app.route('/images/{image_id}/read', methods = ['POST'], cors = True)

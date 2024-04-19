@@ -86,7 +86,8 @@ function Test() {
                 },
                 body: JSON.stringify({
                     fromLang: "auto",
-                    toLang: "en"
+                    toLang: "en",
+                    rekognitionId: rekognitionId /// key value pair to pass to the server (for emotion_logs table)
                 })
             });
             const emotions = await response.json();
