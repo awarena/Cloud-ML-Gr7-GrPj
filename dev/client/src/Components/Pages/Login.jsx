@@ -8,6 +8,8 @@ const serverUrl = "http://127.0.0.1:8000";
 function Login() {
     const [audioUrl, setAudioUrl] = useState('');
     const [welcomeMessage, setWelcomeMessage] = useState('');
+    const [rekognitionId, setRekognitionId] = useState('');
+
     const [error, setError] = useState('');
     const fileInputAuthRef = useRef(null);
 
@@ -55,6 +57,10 @@ function Login() {
                 body: JSON.stringify({ imageId: image.fileId })
             });
             const result = await response.json();
+            setRekognitionId(result.rekognitionId);
+            // Save rekognitionId to localStorage
+            localStorage.setItem('rekognitionId', result.rekognitionId);
+            console.log(result);
             if (!response.ok) throw new Error(result.message || 'Authentication failed');
             console.log(result)
             readAuthResponse(result);
