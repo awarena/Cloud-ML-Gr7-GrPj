@@ -13,7 +13,7 @@ class DynamoService:
         # Check if the table exists, create it if it doesn't
         if not self._table_exists(self.table_name):
             self._create_table(self.table_name)
-        # Check if the emotion_logs table exists, create it if it doesn't
+        ### Check if the emotion_logs table exists, create it if it doesn't
         if not self._table_exists(self.emotion_logs_table_name):
             self._create_emotion_logs_table()           
 
