@@ -1,7 +1,7 @@
-from chalice import Chalice
+from chalice import Chalice, UnauthorizedError
+import jwt
 from chalicelib import storage_service
 from chalicelib import recognition_service
-from chalicelib import translation_service
 from chalicelib import tts_service
 from chalicelib import dynamo_service
 
@@ -13,26 +13,40 @@ import json
 #####
 app = Chalice(app_name='EmotSense')
 app.debug = True
-
+# Secret key used for JWT token encoding and decoding
+SECRET_KEY = 'your_secret_key'
 #####
 # services initialization
 #####
-storage_location = 'contentcen301232634.aws.ai'
+storage_location = 'contentcen301330426.aws.ai'
 # target_image_storage =  'emotsense-target-images'
-target_image_storage =  'contentcen301232634.aws.ai'
+target_image_storage =  'contentcen301330426.aws.ai'
 
 # user_reg_image_storage = 'emotsense-user-images'
-user_reg_image_storage =  'contentcen301232634.aws.ai'
+user_reg_image_storage =  'contentcen301330426.aws.ai'
 
 # user_auth_image_storage = 'emotsense-auth-images'
-user_auth_image_storage =  'contentcen301232634.aws.ai'
+user_auth_image_storage =  'contentcen301330426.aws.ai'
 
 storage_service = storage_service.StorageService()
 recognition_service = recognition_service.RecognitionService(storage_service)
-translation_service = translation_service.TranslationService()
 tts_service = tts_service.TTSService()
 dynamo_service = dynamo_service.DynamoService()
 
+# Decorator function to check JWT tokens
+def jwt_auth_required(func):
+    def wrapper(*args, **kwargs):
+        token = app.current_request.json_body.get('token')
+        if not token:
+            raise UnauthorizedError("Authorization token is missing")
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise UnauthorizedError("Token has expired")
+        except jwt.InvalidTokenError:
+            raise UnauthorizedError("Invalid token")
+        return func(*args, **kwargs)
+    return wrapper
 
 #####
 # RESTful endpoints
@@ -48,14 +62,11 @@ def upload_image():
 
     return image_info
 
-
+# protected endpoint
 @app.route('/images/{image_id}/detect-emotion', methods = ['POST'], cors = True)
+@jwt_auth_required
 def detect_emotion(image_id):
-    """detects then translates text in the specified image"""
-    request_data = json.loads(app.current_request.raw_body)
-    from_lang = request_data['fromLang']
-    to_lang = request_data['toLang']
-
+    print("User ID: ", payload['rekognitionId'])
     MIN_CONFIDENCE = 60.0
 
     emotions = []
@@ -66,7 +77,9 @@ def detect_emotion(image_id):
             emotions.append(label['Type'])
     return emotions
 
+# protected endpoint
 @app.route('/images/{image_id}/read', methods = ['POST'], cors = True)
+@jwt_auth_required
 def read_emotion(image_id):
     request_data = json.loads(app.current_request.raw_body)
     text = request_data['text']
@@ -106,13 +119,17 @@ def authenticate_user():
         face = dynamo_service.get_user(match['Face']['FaceId'])
         if 'Item' in face:
             print('Person Found: ', face['Item'])
+            face['Item']['token'] = jwt.encode({'rekognitionId': face['Item']['rekognitionId']}, SECRET_KEY, algorithm='HS256')
             face['Item']['Message'] = "Success"
             return face['Item']
         
     return { 'Message': 'User not found' }
 
+# protected endpoint
 @app.route('/users/{face_id}/read_auth', methods = ['POST'], cors = True)
+@jwt_auth_required
 def read_emotion(face_id):
+    print("User ID: ", payload['rekognitionId'])
     request_data = json.loads(app.current_request.raw_body)
     text = request_data['text']
 
@@ -120,3 +137,8 @@ def read_emotion(face_id):
     audio_stream = response['AudioStream'].read()
     audio_info = storage_service.upload_file(audio_stream, face_id + ".mp3", user_auth_image_storage)
     return audio_info
+
+# Error handler for UnauthorizedError
+@app.route('/error', methods=['POST'])
+def error_handler():
+    return {'error': 'Unauthorized'}, 401
