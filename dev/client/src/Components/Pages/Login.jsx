@@ -61,6 +61,8 @@ function Login() {
                 setWelcomeMessage(welcomeText);
                 setJwt(result.token);
                 login(result.token); // Correctly use the login function here
+                setRekognitionId(result.rekognitionId);
+                localStorage.setItem('rekognitionId', result.rekognitionId);
                 const audioResponse = await fetch(`${serverUrl}/users/${result.rekognitionId}/read_auth`, {
                     method: "POST",
                     headers: {
