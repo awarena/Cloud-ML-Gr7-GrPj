@@ -13,6 +13,8 @@ function Login() {
     const [jwt, setJwt] = useState('');
     const [audioUrl, setAudioUrl] = useState('');
     const [welcomeMessage, setWelcomeMessage] = useState('');
+    const [rekognitionId, setRekognitionId] = useState('');
+
     const [error, setError] = useState('');
     const fileInputAuthRef = useRef(null);
 
@@ -50,8 +52,6 @@ function Login() {
                 },
                 body: JSON.stringify({ imageId: imageDetails.fileId })
             });
-            const result = await authResponse.json();
-            if (!authResponse.ok) throw new Error(result.message || 'Authentication failed');
 
             if (result.Message === 'Success') {
                 const welcomeText = `Welcome ${result.firstName} ${result.lastName}!`;

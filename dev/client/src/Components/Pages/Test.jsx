@@ -12,6 +12,7 @@ function Test() {
     const [emotionsText, setEmotionsText] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const rekognitionId = localStorage.getItem('rekognitionId');
 
     const fileInputRef = useRef(null);
     const imageRef = useRef(null);
@@ -39,7 +40,7 @@ function Test() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: storage })
+                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: storage, rekognitionId:rekognitionId })
             });
 
             const result = await response.json();
@@ -85,7 +86,8 @@ function Test() {
                 },
                 body: JSON.stringify({
                     fromLang: "auto",
-                    toLang: "en"
+                    toLang: "en",
+                    rekognitionId: rekognitionId /// key value pair to pass to the server (for emotion_logs table)
                 })
             });
             const emotions = await response.json();
@@ -132,6 +134,11 @@ function Test() {
     return (
         <div>
             <Navbar />
+            {rekognitionId ? (
+                <p>Rekognition ID: {rekognitionId}</p>
+            ) : (
+                <p>No Rekognition ID found.</p>
+            )}
             <div className="box">
                 <div className="test-container">
                     <h1>Upload Image and Detect Emotions</h1>

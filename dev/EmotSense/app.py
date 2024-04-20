@@ -102,6 +102,9 @@ def detect_emotion(image_id):
         print('-- ' + label['Type'] + ': ' + str(label['Confidence']))
         if label['Confidence'] > MIN_CONFIDENCE:
             emotions.append(label['Type'])
+
+    dynamo_service.log_emotions(rekognitionId, emotions)  ### call the log_emotions method from dynamo_service.py
+
     return emotions
 
 @app.route('/images/{image_id}/read', methods=['POST'], cors=True)
