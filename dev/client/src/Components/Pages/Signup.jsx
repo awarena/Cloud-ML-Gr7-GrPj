@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react';
+import Navbar from '../Layout/Navbar';
+import Footer from '../Layout/Footer';
 
 const serverUrl = "http://127.0.0.1:8000";
 
@@ -65,11 +67,17 @@ function Signup() {
     };
 
     return (
-        <div>
-            <h1>Sign Up</h1>
-            <input type="file" ref={fileInputRef} />
-            <button onClick={handleRegister}>Register</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div className='container'>
+            <Navbar />
+            <div className="login-container">
+                <div className="login-form">
+                    <h1 className="login-header">Sign Up</h1>
+                    <input type="file" ref={fileInputRef} />
+                    <button onClick={handleRegister}>Register</button>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                </div>
+            </div>
+            <Footer />
         </div>
     );
 }
