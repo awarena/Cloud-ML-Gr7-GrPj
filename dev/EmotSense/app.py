@@ -77,7 +77,6 @@ def verify_jwt():
 @app.route('/images', methods=['POST'], cors=True)
 def upload_image():
     """Processes file upload and saves file to storage service"""
-    request_data = json.loads(app.current_request.raw_body)
     file_name = request_data['filename']
     file_bytes = base64.b64decode(request_data['filebytes'])
     folder = request_data['folder']
@@ -98,8 +97,7 @@ def detect_emotion(image_id):
         if label['Confidence'] > MIN_CONFIDENCE:
             emotions.append(label['Type'])
 
-    dynamo_service.log_emotions(rekognitionId, emotions)  ### call the log_emotions method from dynamo_service.py
-
+    dynamo_service.log_emotions(rekognitionId, emotions)  ### call the log_emotions method from dynamo_service.pyßß
     return emotions
 
 @app.route('/images/{image_id}/read', methods=['POST'], cors=True)
@@ -150,7 +148,7 @@ def authenticate_user():
     return {'Message': 'User not found'}
 
 @app.route('/users/{face_id}/read_auth', methods=['POST'], cors=True)
-def read_emotion(face_id):
+def read_auth(face_id):
     request_data = json.loads(app.current_request.raw_body)
     text = request_data['text']
     response = tts_service.synthesize_speech(text)
