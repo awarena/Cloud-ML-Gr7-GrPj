@@ -77,6 +77,7 @@ def verify_jwt():
 @app.route('/images', methods=['POST'], cors=True)
 def upload_image():
     """Processes file upload and saves file to storage service"""
+    request_data = json.loads(app.current_request.raw_body)
     file_name = request_data['filename']
     file_bytes = base64.b64decode(request_data['filebytes'])
     folder = request_data['folder']
