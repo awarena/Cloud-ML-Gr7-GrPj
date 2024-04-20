@@ -9,7 +9,7 @@ import ProtectedRoute from './Components/ProtectedRoute'; // Ensure this is used
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Login />} />
       <Route path="/test" element={<ProtectedRoute element={<Test />} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
