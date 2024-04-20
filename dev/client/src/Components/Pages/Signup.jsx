@@ -8,7 +8,7 @@ function Signup() {
     const [error, setError] = useState(null);
     const fileInputRef = useRef(null);
 
-    const uploadUserImage = async (storage) => {
+    const uploadUserImage = async () => {
         const file = fileInputRef.current.files[0];
         const reader = new FileReader();
 
@@ -25,7 +25,7 @@ function Signup() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: storage })
+                body: JSON.stringify({ filename: file.name, filebytes: encodedString, folder: "register" })
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message || 'Failed to upload image');
@@ -44,7 +44,7 @@ function Signup() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ imageId: image.fileId })
+                body: JSON.stringify({ imageId: image.fileId, folder: image.folder })
             });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message || 'Failed to create user');
@@ -57,7 +57,7 @@ function Signup() {
 
     const handleRegister = async () => {
         try {
-            const imageDetails = await uploadUserImage('contentcen301330426.aws.ai');
+            const imageDetails = await uploadUserImage();
             await createUser(imageDetails);
             alert('User registered successfully!');
         } catch (error) {

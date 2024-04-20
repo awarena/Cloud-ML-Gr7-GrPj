@@ -39,7 +39,7 @@ function Login() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: 'contentcen301330426.aws.ai' })
+                body: JSON.stringify({ filename: file.name, filebytes: encodedString, folder: 'authenticate' })
             });
             const imageDetails = await response.json();
             if (!response.ok) throw new Error(imageDetails.message || 'Failed to upload image');
@@ -50,7 +50,7 @@ function Login() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ imageId: imageDetails.fileId })
+                body: JSON.stringify({ imageId: imageDetails.fileId, folder: imageDetails.folder })
             });
 
             const result = await authResponse.json();
@@ -86,7 +86,7 @@ function Login() {
             audio.play();
         }
     };
-    
+
     return (
         <div className='container'>
             <Navbar />
