@@ -18,7 +18,7 @@ function Test() {
     const imageRef = useRef(null);
     const emotionsRef = useRef(null);
 
-    const uploadImage = async (storage) => {
+    const uploadImage = async () => {
         const file = fileInputRef.current.files[0];
         if (!file) {
             setError("Please select a file first.");
@@ -40,7 +40,7 @@ function Test() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: storage, rekognitionId:rekognitionId })
+                body: JSON.stringify({ filename: file.name, filebytes: encodedString, folder: "emotions", rekognitionId:rekognitionId })
             });
 
             const result = await response.json();
@@ -57,7 +57,8 @@ function Test() {
 
     const handleUploadAndDetect = async () => {
         setError(null); // Clear previous errors
-        const imageDetails = await uploadImage('contentcen301330426.aws.ai');
+        setAudioUrl('');
+        const imageDetails = await uploadImage();
         if (imageDetails) {
             updateImage(imageDetails);
             detectEmotion(imageDetails);
@@ -85,7 +86,8 @@ function Test() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    rekognitionId: rekognitionId /// key value pair to pass to the server (for emotion_logs table)
+                    rekognitionId: rekognitionId, /// key value pair to pass to the server (for emotion_logs table)
+                    folder: image.folder
                 })
             });
             const emotions = await response.json();
@@ -108,10 +110,11 @@ function Test() {
             </React.Fragment>
         ));
         setEmotionsText(emotionElements);
-    };
+    }
 
     const handleAudioLoad = () => {
-        const audio = document.getElementById('audio-player');
+        const audio = document.getElementById('audio-emotion');
+        console.log(audio)
         if (audio) {
             audio.play();
         }
@@ -136,6 +139,7 @@ function Test() {
             setAudioUrl(data.fileUrl);
         });
     };
+
     return (
         <div>
             <Navbar />
@@ -157,12 +161,12 @@ function Test() {
                         <div ref={emotionsRef}>{emotionsText}</div>
                     </div>
                     {audioUrl && (
-                    <div className="audio-control">
-                        <audio id='audio-player' controls onLoadedData={handleAudioLoad}>
-                            <source src={audioUrl} type="audio/mpeg" />
-                        </audio>
-                    </div>
-                )}
+                        <div className="audio-control">
+                            <audio id='audio-emotion' controls onLoadedData={handleAudioLoad}>
+                                <source src={audioUrl} type="audio/mpeg" />
+                            </audio>
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />

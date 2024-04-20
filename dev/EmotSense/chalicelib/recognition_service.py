@@ -1,10 +1,11 @@
 import boto3
 
 class RecognitionService:
-    def __init__(self, storage_service):
+    def __init__(self, storage_location):
         self.client = boto3.client('rekognition')
         self.collection_id = "users"
         self.ensure_collection_exists()
+        self.bucket_name = storage_location
 
     def ensure_collection_exists(self):
         """Ensure the Rekognition collection exists, create if not."""
@@ -17,26 +18,30 @@ class RecognitionService:
             self.client.create_collection(CollectionId=self.collection_id)
             print("Collection created.")
 
-    def detect_emotion(self, file_name, bucket_name):
+    def detect_emotion(self, file_name, folder):
         """Detect emotions in the image specified by file_name and bucket_name."""
+        key = f"{folder}/{file_name}"
         response = self.client.detect_faces(
             Image={
                 'S3Object': {
-                    'Bucket': bucket_name,
-                    'Name': file_name
+                    'Bucket': self.bucket_name,
+                    'Name': key
                 }
             },
             Attributes=['ALL',]
         )
         return response['FaceDetails'][0]['Emotions']
     
-    def index_image(self, file_name, bucket_name):
+    def index_image(self, file_name, folder):
         """Index an image by storing facial details in the collection."""
+        key = f"{folder}/{file_name}"
+        print(key)
+        print(self.bucket_name)
         response = self.client.index_faces(
             Image={
                 'S3Object': {
-                    'Bucket': bucket_name,
-                    'Name': file_name
+                    'Bucket': self.bucket_name,
+                    'Name': key
                 }
             },
             CollectionId=self.collection_id
