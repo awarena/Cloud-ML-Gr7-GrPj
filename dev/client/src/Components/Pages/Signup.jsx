@@ -57,7 +57,7 @@ function Signup() {
 
     const handleRegister = async () => {
         try {
-            const imageDetails = await uploadUserImage('contentcen301232634.aws.ai');
+            const imageDetails = await uploadUserImage('contentcen301330426.aws.ai');
             await createUser(imageDetails);
             alert('User registered successfully!');
         } catch (error) {

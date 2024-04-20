@@ -39,7 +39,7 @@ function Login() {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: 'contentcen301232634.aws.ai' })
+                body: JSON.stringify({ filename: file.name, filebytes: encodedString, storage: 'contentcen301330426.aws.ai' })
             });
             const imageDetails = await response.json();
             if (!response.ok) throw new Error(imageDetails.message || 'Failed to upload image');
@@ -52,6 +52,9 @@ function Login() {
                 },
                 body: JSON.stringify({ imageId: imageDetails.fileId })
             });
+
+            const result = await authResponse.json();
+            if(!authResponse.ok) throw new Error(result.message || 'Authentication failed.');
 
             if (result.Message === 'Success') {
                 const welcomeText = `Welcome ${result.firstName} ${result.lastName}!`;
@@ -77,7 +80,13 @@ function Login() {
             setError(error.message);
         }
     };
-
+    const handleAudioLoad = () => {
+        const audio = document.getElementById('audio-auth');
+        if (audio) {
+            audio.play();
+        }
+    };
+    
     return (
         <div className='container'>
             <Navbar />
@@ -90,7 +99,7 @@ function Login() {
                     </button>
                     {audioUrl && (
                         <div className="audio-control">
-                            <audio controls>
+                            <audio id='audio-auth' controls onLoadedData={handleAudioLoad}>
                                 <source src={audioUrl} type="audio/mpeg" />
                             </audio>
                         </div>

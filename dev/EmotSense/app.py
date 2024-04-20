@@ -13,10 +13,10 @@ app.debug = True
 SECRET_KEY = 'your_secret_key'
 
 # Services initialization
-storage_location = 'contentcen301232634.aws.ai'
-target_image_storage = 'contentcen301232634.aws.ai'
-user_reg_image_storage = 'contentcen301232634.aws.ai'
-user_auth_image_storage = 'contentcen301232634.aws.ai'
+storage_location = 'contentcen301330426.aws.ai'
+target_image_storage = 'contentcen301330426.aws.ai'
+user_reg_image_storage = 'contentcen301330426.aws.ai'
+user_auth_image_storage = 'contentcen301330426.aws.ai'
 
 storage_service = storage_service.StorageService()
 recognition_service = recognition_service.RecognitionService(storage_service)
@@ -93,8 +93,7 @@ def upload_image():
 def detect_emotion(image_id):
     """Detects then translates text in the specified image"""
     request_data = json.loads(app.current_request.raw_body)
-    from_lang = request_data['fromLang']
-    to_lang = request_data['toLang']
+    rekognitionId = request_data['rekognitionId']
     MIN_CONFIDENCE = 60.0
     emotions = []
     labels = recognition_service.detect_emotion(image_id, target_image_storage)

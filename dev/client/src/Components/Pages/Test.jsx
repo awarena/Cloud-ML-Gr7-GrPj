@@ -57,7 +57,7 @@ function Test() {
 
     const handleUploadAndDetect = async () => {
         setError(null); // Clear previous errors
-        const imageDetails = await uploadImage('contentcen301232634.aws.ai');
+        const imageDetails = await uploadImage('contentcen301330426.aws.ai');
         if (imageDetails) {
             updateImage(imageDetails);
             detectEmotion(imageDetails);
@@ -73,7 +73,7 @@ function Test() {
         setFileUrl(fileUrl);
         setFileId(fileId);
     };
-
+   
     const detectEmotion = async (image) => {
         if (!image) return;
         setLoading(true);
@@ -85,8 +85,6 @@ function Test() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    fromLang: "auto",
-                    toLang: "en",
                     rekognitionId: rekognitionId /// key value pair to pass to the server (for emotion_logs table)
                 })
             });
@@ -112,6 +110,13 @@ function Test() {
         setEmotionsText(emotionElements);
     };
 
+    const handleAudioLoad = () => {
+        const audio = document.getElementById('audio-player');
+        if (audio) {
+            audio.play();
+        }
+    };
+
     const readEmotion = (emotionText, fileId) => {
         fetch(`${serverUrl}/images/${fileId}/read`, {
             method: "POST",
@@ -130,7 +135,7 @@ function Test() {
             console.log(data)
             setAudioUrl(data.fileUrl);
         });
-    }
+    };
     return (
         <div>
             <Navbar />
@@ -153,7 +158,7 @@ function Test() {
                     </div>
                     {audioUrl && (
                     <div className="audio-control">
-                        <audio controls>
+                        <audio id='audio-player' controls onLoadedData={handleAudioLoad}>
                             <source src={audioUrl} type="audio/mpeg" />
                         </audio>
                     </div>
